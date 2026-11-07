@@ -1,0 +1,46 @@
+@host = http://localhost:5117
+
+# Returns 201 the first time and 200 on every identical retry.
+POST {{host}}/awards
+Content-Type: application/json
+
+{
+  "sourceId": "S1",
+  "externalTransactionId": "T1",
+  "walletId": "W100",
+  "points": 25
+}
+
+###
+
+# Same identity with different points: 409.
+POST {{host}}/awards
+Content-Type: application/json
+
+{
+  "sourceId": "S1",
+  "externalTransactionId": "T1",
+  "walletId": "W100",
+  "points": 30
+}
+
+###
+
+# New identity with an unknown wallet: 404.
+POST {{host}}/awards
+Content-Type: application/json
+
+{
+  "sourceId": "S1",
+  "externalTransactionId": "T2",
+  "walletId": "W999",
+  "points": 25
+}
+
+###
+
+GET {{host}}/wallets/W100
+
+###
+
+GET {{host}}/wallets/W200
